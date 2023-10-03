@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">Assignment-02</string>
-    <string name="main_activity">Random Number Generator</string>
+    <string name="main_activity">Assignment 01</string>
+    <string name="generate_random_number_activity">Random Number Generator</string>
     <string name="generate_number">Generate Number</string>
     <string name="random_number_between">Random number between 0 – 100:</string>
+    <string name="calculate">Calculate</string>
+    <string name="add">Add</string>
+    <string name="multiply">Multiply</string>
+    <string name="answer">Answer:</string>
+    <string name="upper_limit">Upper Limit:</string>
+    <string name="correct">Correct!</string>
+    <string name="wrong">Wrong. Correct answer is:</string>
+    <string name="calculation_activity">Guess Answer of Calculation</string>
+    <string name="first_calc_text">3</string>
+    <string name="second_calc_text">5</string>
 </resources>

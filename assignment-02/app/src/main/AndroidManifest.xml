@@ -24,7 +24,23 @@
         </activity>
 
         <activity
+            android:name=".RandomNumberActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Assignment02">
+        </activity>
+
+        <activity
             android:name=".GenerateRandomNumberActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Assignment02">
+            <intent-filter>
+                <action android:name="android.intent.action.RANDOM_NUMBER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".GuessCalculationActivity"
             android:exported="true"
             android:theme="@style/Theme.Assignment02">
             <intent-filter>
