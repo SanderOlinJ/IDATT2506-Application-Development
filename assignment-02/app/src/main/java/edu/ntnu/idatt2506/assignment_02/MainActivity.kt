@@ -1,46 +1,38 @@
 package edu.ntnu.idatt2506.assignment_02
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import edu.ntnu.idatt2506.assignment_02.ui.theme.Assignment02Theme
+import android.util.Log
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : Activity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            Assignment02Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
-        }
+        setContentView(R.layout.activity_main)
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    fun onGenerateNumberClicked(view: View?) {
+        val intent = Intent(this, GenerateRandomNumberActivity::class.java)
+        intent.putExtra("upper_limit", 100);
+        startActivityForResult(intent,1)
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Assignment02Theme {
-        Greeting("Android")
+    @SuppressLint("SetTextI18n")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != RESULT_OK || requestCode != 1) {
+            Log.e("onActivityResult()", "Error fetching result")
+            return
+        }
+        val result = data.getIntExtra("random_number", 0)
+        Toast.makeText(this, "Random number: $result", Toast.LENGTH_SHORT).show()
+        val textView = findViewById<View>(R.id.textView) as TextView
+        textView.text = "Random number: $result"
     }
 }
