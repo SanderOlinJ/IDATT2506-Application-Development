@@ -17,7 +17,7 @@ class RandomNumberActivity : Activity() {
 
     fun onGenerateNumberClicked(view: View?) {
         val intent = Intent(this, GenerateRandomNumberActivity::class.java)
-        intent.putExtra("upper_limit", 100);
+        intent.putExtra("upper_limit", 100)
         startActivityForResult(intent,1)
     }
 
@@ -28,10 +28,16 @@ class RandomNumberActivity : Activity() {
             Log.e("onActivityResult()", "Error fetching result")
             return
         }
-        val result = data.getIntExtra("random_number", 0)
-        Toast.makeText(this, "Random number: $result", Toast.LENGTH_SHORT).show()
+
+        val randomNumber = data.getIntArrayExtra("random_numbers")
+        if (randomNumber == null || randomNumber.size != 1) {
+            Log.e("onActivityResult()", "Did not receive correct result")
+            return
+        }
+        Toast.makeText(this, "Random number: ${randomNumber[0]}",
+            Toast.LENGTH_SHORT).show()
         val textView = findViewById<View>(R.id.textView) as TextView
-        textView.text = "Random number: $result"
+        textView.text = "Random number: ${randomNumber[0]}"
     }
 
     fun onCalculateClicked(view: View) {

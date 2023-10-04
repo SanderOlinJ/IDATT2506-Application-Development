@@ -14,4 +14,6 @@
     <string name="calculation_activity">Guess Answer of Calculation</string>
     <string name="first_calc_text">3</string>
     <string name="second_calc_text">5</string>
+    <string name="guess_answer">8</string>
+    <string name="upper_limit_value">10</string>
 </resources>
