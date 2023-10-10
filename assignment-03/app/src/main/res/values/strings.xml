@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Assignment-03</string>
+    <string name="name">Name of friend:</string>
+    <string name="add_friends">Add Friends!</string>
+    <string name="name_of_friend">Name of Friend:</string>
+    <string name="birthday">Birthday:</string>
+    <string name="enter_name">Enter name…</string>
+    <string name="birthday_format">DD-MM-YYYY</string>
+    <string name="show_friends">Show Friends!</string>
+    <string name="add_friend">Add Friend!</string>
+    <string name="return_">Return</string>
 </resources>

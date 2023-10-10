@@ -1,46 +1,50 @@
 package edu.ntnu.idatt2506.assignment_03
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import edu.ntnu.idatt2506.assignment_03.ui.theme.Assignment03Theme
+import android.util.Log
+import android.view.View
+import android.widget.EditText
 
-class MainActivity : ComponentActivity() {
+class MainActivity : Activity() {
+
+    private val listOfFriends = ArrayList<String>()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            Assignment03Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+        setContentView(R.layout.main_activity)
+    }
+
+    fun onAddFriendClicked(view: View) {
+        val nameEditText = findViewById<EditText>(R.id.name_of_friend)
+        val friendName = nameEditText.text.toString()
+
+        val birthdayEditText = findViewById<EditText>(R.id.birthday_of_friend)
+        val friendBirthday = birthdayEditText.text.toString()
+
+        listOfFriends.add("$friendName - $friendBirthday")
+        nameEditText.text.clear()
+        birthdayEditText.text.clear()
+    }
+
+    fun onShowFriendsClicked(view: View) {
+        val intent = Intent(this, ShowFriendsActivity::class.java)
+        intent.putExtra("liftOfFriends", listOfFriends)
+        startActivityForResult(intent, 1)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            val updatedList = data?.getStringArrayListExtra("updatedList")
+            Log.d("onActivityResult", "RESULT OK")
+            if (updatedList != null) {
+                Log.d("onActivityResult", "List of Friends cleared")
+                listOfFriends.clear()
+                listOfFriends.addAll(updatedList)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Assignment03Theme {
-        Greeting("Android")
     }
 }
