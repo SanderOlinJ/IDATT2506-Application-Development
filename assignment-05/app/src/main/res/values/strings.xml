@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Assignment-05</string>
+    <string name="guess_the_number">Guess the Number!</string>
+    <string name="intro_details">Before playing, please enter your name and your card number.</string>
+    <string name="name">Name:</string>
+    <string name="name_hint">Your name…</string>
+    <string name="card_number">Card Number:</string>
+    <string name="card_number_hint">Card Number…</string>
+    <string name="start_playing">Start Playing!</string>
+    <string name="empty_fields_error">Please fill out both fields</string>
 </resources>
