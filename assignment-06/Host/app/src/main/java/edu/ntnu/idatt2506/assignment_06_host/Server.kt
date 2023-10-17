@@ -13,6 +13,7 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.ServerSocket
 import java.net.Socket
+import java.util.concurrent.ConcurrentHashMap
 
 class Server(
     private val receivedMessageTextView: TextView,
@@ -20,7 +21,8 @@ class Server(
     private val PORT: Int = 12345,
 ) {
 
-    private var client: Socket? = null
+    private val clients = ConcurrentHashMap<Socket, PrintWriter>()
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     private var receivedMessage: String? = ""
         set(str) {
@@ -39,37 +41,59 @@ class Server(
         }
 
     fun start() {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             try {
                 receivedMessage = "Starting Host ..."
                 withContext(Dispatchers.IO) {
                     ServerSocket(PORT).use { serverSocket: ServerSocket ->
                         receivedMessage = "ServerSocket created, waiting for client connection...."
-                        client = serverSocket.accept()
-                        receivedMessage = "Client connected to:\n$client"
-                        sendToClient("Welcome Client!")
-                        readFromClient()
+                        var clientIndex = 0
+                        while (true) {
+                            val clientSocket = serverSocket.accept()
+                            receivedMessage = "Client connected to:\n$clientSocket"
+                            val clientWriter =
+                                PrintWriter(clientSocket.getOutputStream(), true)
+                            clients[clientSocket] = clientWriter
+                            sendToClient("Welcome Client!", clientWriter)
+                            scope.launch {
+                                readFromClient(clientSocket, clientIndex)
+                            }
+                            clientIndex++
+                        }
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 receivedMessage = e.message
             }
+
+            scope.launch {
+                while (true) {
+                    val disconnectedClients = clients.entries.filter {
+                        it.key.isClosed || !it.key.isConnected }
+                    for (entry in disconnectedClients) {
+                        clients.remove(entry.key)
+                        Log.d("handleDisconnectedClients()",
+                            "Client has disconnected: ${entry.key}")
+                    }
+                    delay(5000)
+                }
+            }
         }
     }
 
-    private fun readFromClient() {
-        val reader = BufferedReader(InputStreamReader(client?.getInputStream()))
+    private fun readFromClient(client: Socket, clientIndex: Int) {
+        val reader = BufferedReader(InputStreamReader(client.getInputStream()))
         try {
             while (true) {
                 val message = reader.readLine()
                 if (message == null) {
-                    client = null
-                    Log.d("readFromClient()", "Client has disconnected.")
+                    clients.remove(client)
+                    Log.d("readFromClient()", "Client $clientIndex has disconnected.")
                     break
                 }
-                Log.d("readFromClient()", "Client said:\n$message")
-                receivedMessage = message
+                Log.d("readFromClient()", "Client $clientIndex said:\n$message")
+                receivedMessage = "Client $clientIndex:\n$message"
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -77,20 +101,20 @@ class Server(
         }
     }
 
-    fun sendToClient(message: String) {
+    private fun sendToClient(message: String, clientWriter: PrintWriter) {
         try {
-            if (client != null && client!!.isConnected) {
-                val writer = PrintWriter(client!!.getOutputStream(), true)
-                Log.d("sendToClient()", message)
-                writer.println(message)
-                Log.d("sendToClient()", "Sent to client:\n$message")
-                sentMessage = message
-            } else {
-                Log.e("sendToClient()", "Client not connected")
-            }
+            clientWriter.println(message)
+            Log.d("sendToClient()", "Sent to client:\n$message")
+            sentMessage = message
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("sendToClient()", "Error sending message: ${e.message}")
+        }
+    }
+
+    fun sendToClients(message: String) {
+        for (clientWriter in clients.values) {
+            sendToClient(message, clientWriter)
         }
     }
 }

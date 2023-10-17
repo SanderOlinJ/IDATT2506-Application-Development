@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         sendButton.setOnClickListener {
             Log.d("onClick", messageToSend.text.toString())
             CoroutineScope(Dispatchers.IO).launch {
-                server.sendToClient(messageToSend.text.toString())
+                server.sendToClients(messageToSend.text.toString())
             }
         }
     }
