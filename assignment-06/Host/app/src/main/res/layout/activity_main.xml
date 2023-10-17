@@ -10,6 +10,7 @@
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/message_to_send"
             android:layout_width="300sp"
             android:layout_height="match_parent"
             android:hint="@string/type_message"
@@ -20,6 +21,7 @@
             />
 
         <Button
+            android:id="@+id/send_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/send"
