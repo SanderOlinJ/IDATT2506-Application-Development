@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Assignment-06-Host</string>
+    <string name="type_message">Type message…</string>
+    <string name="send">Send!</string>
+    <string name="received">Received</string>
+    <string name="sent">Sent</string>
 </resources>
