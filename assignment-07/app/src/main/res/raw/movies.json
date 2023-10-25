@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Fury",
+    "director": "David Ayer",
+    "actors": [
+      {
+        "name": "Brad Pitt"
+      },
+      {
+        "name": "Shia LaBeouf"
+      }
+    ]
+  },
+  {
+    "title": "Inglorious Basterds",
+    "director": "Quentin Tarantino",
+    "actors": [
+      {
+        "name": "Brad Pitt"
+      },
+      {
+        "name": "Christoph Waltz"
+      }
+    ]
+  },
+  {
+    "title": "Scott Pilgrim vs. The World",
+    "director": "Edgar Wright",
+    "actors": [
+      {
+        "name": "Michael Cera"
+      },
+      {
+        "name": "Mary Elizabeth Winstead"
+      }
+    ]
+  },
+  {
+    "title": "The Nice Guys",
+    "director": "Shane Black",
+    "actors": [
+      {
+        "name": "Ryan Gosling"
+      },
+      {
+        "name": "Russell Crowe"
+      }
+    ]
+  },
+  {
+    "title": "Overlord",
+    "director": "Julius Avery",
+    "actors": [
+      {
+        "name": "Wyatt Russell"
+      },
+      {
+        "name": "Jovan Adepo"
+      }
+    ]
+  }
+]
