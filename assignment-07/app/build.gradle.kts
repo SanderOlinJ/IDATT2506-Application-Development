@@ -7,6 +7,8 @@ android {
     namespace = "edu.ntnu.assignment_07"
     compileSdk = 34
 
+    viewBinding.enable = true
+
     defaultConfig {
         applicationId = "edu.ntnu.assignment_07"
         minSdk = 24

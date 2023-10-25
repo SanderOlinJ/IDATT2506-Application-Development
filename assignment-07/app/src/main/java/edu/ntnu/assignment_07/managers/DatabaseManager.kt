@@ -22,20 +22,13 @@ open class DatabaseManager(context: Context) :
 
         const val TABLE_DIRECTOR = "DIRECTOR"
         const val DIRECTOR_NAME = "name"
+        const val DIRECTOR_ID = "director_id"
 
         const val TABLE_ACTOR = "ACTOR"
         const val ACTOR_NAME = "name"
-
-        const val TABLE_MOVIE_DIRECTOR = "MOVIE_DIRECTOR"
-        const val DIRECTOR_ID = "director_id"
-
-        const val TABLE_MOVIE_ACTOR = "MOVIE_ACTOR"
         const val ACTOR_ID = "actor_ID"
 
-        val JOIN_MOVIE_DIRECTOR = arrayOf(
-            "$TABLE_MOVIE.$ID=$TABLE_MOVIE_DIRECTOR.$MOVIE_ID",
-            "$TABLE_DIRECTOR.$ID=$TABLE_MOVIE_DIRECTOR.$DIRECTOR_ID"
-        )
+        const val TABLE_MOVIE_ACTOR = "MOVIE_ACTOR"
 
         val JOIN_MOVIE_ACTOR = arrayOf(
             "$TABLE_MOVIE.$ID=$TABLE_MOVIE_ACTOR.$MOVIE_ID",
@@ -53,7 +46,9 @@ open class DatabaseManager(context: Context) :
         db.execSQL(
             """create table $TABLE_MOVIE (
 						$ID integer primary key autoincrement, 
-						$MOVIE_NAME text unique not null
+						$MOVIE_NAME text unique not null,
+                        $DIRECTOR_ID numeric,
+                        FOREIGN KEY($DIRECTOR_ID) REFERENCES $TABLE_DIRECTOR($ID)
 						);"""
         )
         db.execSQL(
@@ -67,15 +62,6 @@ open class DatabaseManager(context: Context) :
 						$ID integer primary key autoincrement, 
 						$ACTOR_NAME text unique not null
 						);"""
-        )
-        db.execSQL(
-            """create table $TABLE_MOVIE_DIRECTOR (
-                        $ID integer primary key autoincrement,
-                        $MOVIE_ID numeric,
-                        $DIRECTOR_ID numeric,
-                        FOREIGN KEY($MOVIE_ID) REFERENCES $TABLE_MOVIE($ID), 
-						FOREIGN KEY($DIRECTOR_ID) REFERENCES $TABLE_DIRECTOR($ID)
-                ); """
         )
         db.execSQL(
             """create table $TABLE_MOVIE_ACTOR (
@@ -99,7 +85,6 @@ open class DatabaseManager(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS $TABLE_MOVIE")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_DIRECTOR")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_ACTOR")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_MOVIE_DIRECTOR")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_MOVIE_ACTOR")
         onCreate(db)
     }
@@ -123,28 +108,21 @@ open class DatabaseManager(context: Context) :
             val movieId = insertValueIfNotExists(database, TABLE_MOVIE, MOVIE_NAME, movie)
             val directorId =
                 insertValueIfNotExists(database, TABLE_DIRECTOR, DIRECTOR_NAME, director)
+
+            val updateValues = ContentValues().apply {
+                put(DIRECTOR_ID, directorId)
+            }
+            database
+                .update(TABLE_MOVIE, updateValues, "$ID = ?", arrayOf(movieId.toString()))
+
             val actorIds = actors.map { actorName ->
                 insertValueIfNotExists(database, TABLE_ACTOR, ACTOR_NAME, actorName)
             }
 
-            linkMovieAndDirector(database, movieId, directorId)
             linkMovieAndActors(database, movieId, actorIds)
         }
     }
 
-    /**
-     * Insert a relationship between a movie and a director in the MOVIE_DIRECTOR table.
-     */
-    private fun linkMovieAndDirector(
-        database: SQLiteDatabase,
-        movieId: Long,
-        directorId: Long)
-    {
-        val values = ContentValues()
-        values.put(MOVIE_ID, movieId)
-        values.put(DIRECTOR_ID, directorId)
-        database.insert(TABLE_MOVIE_DIRECTOR, null, values)
-    }
 
     /**
      * Insert a relationship between a movie and an actor in the MOVIE_ACTOR table.

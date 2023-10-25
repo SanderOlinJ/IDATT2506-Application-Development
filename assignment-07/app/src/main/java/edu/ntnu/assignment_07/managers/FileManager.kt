@@ -11,10 +11,8 @@ import java.io.*
 class FileManager(private val activity: AppCompatActivity) {
 
     private val filename: String = "movies.json"
-
     private var dir: File = activity.filesDir
     private var file: File = File(dir, filename)
-
     private var externalDir: File? = activity.getExternalFilesDir(null)
     private var externalFile = File(externalDir, filename)
 
