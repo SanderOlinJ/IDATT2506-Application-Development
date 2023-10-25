@@ -1,4 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Assignment-07</string>
     <string name="welcome">Welcome to the app!</string>
+    <string name="back_button">Back</string>
+    <string name="background_color">background_color</string>
+    <string name="background_color_default">white</string>
+    <string name="settings">Settings</string>
 </resources>

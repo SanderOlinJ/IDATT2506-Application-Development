@@ -1,4 +1,4 @@
-package edu.ntnu.assignment_07.ui.theme
+package edu.ntnu.idatt2506.assignment_07.theme
 
 import android.app.Activity
 import android.os.Build

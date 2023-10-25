@@ -1,4 +1,4 @@
-package edu.ntnu.assignment_07
+package edu.ntnu.idatt2506.assignment_07
 
 import org.junit.Test
 

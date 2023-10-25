@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context=".MainActivity">
+    tools:context="edu.ntnu.idatt2506.assignment_07.MainActivity">
 
     <TextView
         android:id="@+id/sorting_by"
@@ -19,6 +19,7 @@
     <TextView
         android:id="@+id/result"
         android:paddingTop="20sp"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="25sp"/>

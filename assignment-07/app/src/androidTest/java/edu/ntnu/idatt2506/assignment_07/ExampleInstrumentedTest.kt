@@ -1,4 +1,4 @@
-package edu.ntnu.assignment_07
+package edu.ntnu.idatt2506.assignment_07
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

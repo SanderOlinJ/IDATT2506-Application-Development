@@ -1,4 +1,4 @@
-package edu.ntnu.assignment_07.managers
+package edu.ntnu.idatt2506.assignment_07.managers
 
 import android.content.ContentValues
 import android.content.Context
@@ -6,30 +6,41 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+/**
+ * Provides a centralized management for database operations related to movies, directors, and actors.
+ *
+ * @property context The context from which the database manager is invoked.
+ */
 open class DatabaseManager(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
 
+        // Database version and name
         const val DATABASE_NAME = "MovieDatabase"
         const val DATABASE_VERSION = 1
 
         const val ID = "_id"
 
+        // Movie table and its columns
         const val TABLE_MOVIE = "MOVIE"
         const val MOVIE_NAME = "name"
         const val MOVIE_ID = "movie_id"
 
+        // Director table and its columns
         const val TABLE_DIRECTOR = "DIRECTOR"
         const val DIRECTOR_NAME = "name"
         const val DIRECTOR_ID = "director_id"
 
+        // Actor table and its columns
         const val TABLE_ACTOR = "ACTOR"
         const val ACTOR_NAME = "name"
         const val ACTOR_ID = "actor_ID"
 
+        // Table to associate movies with actors
         const val TABLE_MOVIE_ACTOR = "MOVIE_ACTOR"
 
+        // Join statements to link movies and actors
         val JOIN_MOVIE_ACTOR = arrayOf(
             "$TABLE_MOVIE.$ID=$TABLE_MOVIE_ACTOR.$MOVIE_ID",
             "$TABLE_ACTOR.$ID=$TABLE_MOVIE_ACTOR.$ACTOR_ID"
@@ -38,7 +49,8 @@ open class DatabaseManager(context: Context) :
     }
 
     /**
-     *  Create the tables
+     * Called when the database is created for the first time.
+     * This method creates the required tables.
      */
     override fun onCreate(
         db: SQLiteDatabase)
@@ -75,7 +87,8 @@ open class DatabaseManager(context: Context) :
     }
 
     /**
-     * Drop and recreate all the tables
+     * Called when the database version changes.
+     * This method drops the existing tables and calls [onCreate] to recreate them.
      */
     override fun onUpgrade(
         db: SQLiteDatabase,
@@ -90,14 +103,15 @@ open class DatabaseManager(context: Context) :
     }
 
     /**
-     *  Drop all information is the database
+     * Drops all tables, effectively clearing the entire database.
      */
     fun clear() {
         writableDatabase.use { onUpgrade(it, 0, 0) }
     }
 
     /**
-     *  Inserts the movie, the director, and then the actors in the movie
+     * Inserts a movie entry, its director, and associated actors.
+     * If any of these entities already exists, they will not be duplicated.
      */
     fun insert(
         movie: String,
@@ -123,9 +137,8 @@ open class DatabaseManager(context: Context) :
         }
     }
 
-
     /**
-     * Insert a relationship between a movie and an actor in the MOVIE_ACTOR table.
+     * Associates the given movie with a list of actors.
      */
     private fun linkMovieAndActors(
         database: SQLiteDatabase,
@@ -141,7 +154,10 @@ open class DatabaseManager(context: Context) :
         }
     }
 
-
+    /**
+     * Inserts a value into a table if it does not already exist.
+     * Returns the ID of the existing or newly inserted entry.
+     */
     private fun insertValueIfNotExists(
         database: SQLiteDatabase,
         table: String,
@@ -159,10 +175,8 @@ open class DatabaseManager(context: Context) :
         }
     }
 
-
-
     /**
-     * Insert the value in given table and field, then return its ID
+     * Inserts a value into a table and returns the ID of the newly inserted entry.
      */
     private fun insertValue(
         database: SQLiteDatabase,
@@ -175,12 +189,9 @@ open class DatabaseManager(context: Context) :
         return database.insert(table, null, values)
     }
 
-
     /**
-     * Perform a simple query
-     *
-     * Not the query() function has almost all parameters as *null*, you should check up on these.
-     * maybe you don't even need the performRawQuery() function?
+     * Performs a query on the given table and columns, optionally with a selection criteria.
+     * Returns the results as a list of strings.
      */
     fun performQuery(
         table: String,
@@ -196,7 +207,8 @@ open class DatabaseManager(context: Context) :
     }
 
     /**
-     * Run a raw query, the parameters are for easier debugging and reusable code
+     * Performs a raw SQL query using given SELECT, FROM, and WHERE clauses.
+     * Returns the results as a list of strings.
      */
     fun performRawQuery(
         select: Array<String>,
@@ -232,7 +244,7 @@ open class DatabaseManager(context: Context) :
     }
 
     /**
-     * Read the contents from the cursor and return it as an arraylist
+     * Converts a cursor into a list of strings, based on the number of columns to read.
      */
     private fun readFromCursor(
         cursor: Cursor,
@@ -252,7 +264,7 @@ open class DatabaseManager(context: Context) :
     }
 
     /**
-     * Use a query with default arguments
+     * A helper function to perform a standard query on the database.
      */
     private fun query(
         database: SQLiteDatabase,
