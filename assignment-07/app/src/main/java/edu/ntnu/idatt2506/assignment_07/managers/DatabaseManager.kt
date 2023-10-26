@@ -24,7 +24,7 @@ open class DatabaseManager(context: Context) :
 
         // Movie table and its columns
         const val TABLE_MOVIE = "MOVIE"
-        const val MOVIE_NAME = "name"
+        const val MOVIE_TITLE = "title"
         const val MOVIE_ID = "movie_id"
 
         // Director table and its columns
@@ -58,7 +58,7 @@ open class DatabaseManager(context: Context) :
         db.execSQL(
             """create table $TABLE_MOVIE (
 						$ID integer primary key autoincrement, 
-						$MOVIE_NAME text unique not null,
+						$MOVIE_TITLE text unique not null,
                         $DIRECTOR_ID numeric,
                         FOREIGN KEY($DIRECTOR_ID) REFERENCES $TABLE_DIRECTOR($ID)
 						);"""
@@ -119,7 +119,7 @@ open class DatabaseManager(context: Context) :
         actors: List<String>)
     {
         writableDatabase.use { database ->
-            val movieId = insertValueIfNotExists(database, TABLE_MOVIE, MOVIE_NAME, movie)
+            val movieId = insertValueIfNotExists(database, TABLE_MOVIE, MOVIE_TITLE, movie)
             val directorId =
                 insertValueIfNotExists(database, TABLE_DIRECTOR, DIRECTOR_NAME, director)
 

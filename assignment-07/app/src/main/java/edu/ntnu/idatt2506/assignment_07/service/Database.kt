@@ -1,7 +1,10 @@
 package edu.ntnu.idatt2506.assignment_07.service
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import edu.ntnu.idatt2506.assignment_07.managers.DatabaseManager
+import edu.ntnu.idatt2506.assignment_07.managers.FileManager
+import org.json.JSONArray
 
 /**
  * Database class provides methods for querying information about movies, directors, and actors.
@@ -12,20 +15,27 @@ import edu.ntnu.idatt2506.assignment_07.managers.DatabaseManager
  */
 class Database(context: Context) : DatabaseManager(context) {
 
+    private val fileManager = FileManager(context as AppCompatActivity)
+
     init {
         try {
             this.clear()
-            // Insert sample movies with their directors and actors.
-            this.insert("Fury", "David Ayer",
-                listOf("Brad Pitt", "Shia LaBeouf"))
-            this.insert("Inglorious Basterds", "Quentin Tarantino",
-                listOf("Brad Pitt", "Christoph Waltz"))
-            this.insert("Scott Pilgrim vs. The World", "Edgar Wright",
-                listOf("Michael Cera", "Mary Elizabeth Winstead"))
-            this.insert("The Nice Guys", "Shane Black",
-                listOf("Ryan Gosling", "Russell Crowe"))
-            this.insert("Overlord", "Julius Avery",
-                listOf("Wyatt Russell", "Jovan Adepo"))
+            // Load movies from JSON
+            val movieDataJson = fileManager.read()
+            val movies = JSONArray(movieDataJson)
+
+            for (i in 0 until movies.length()) {
+                val movie = movies.getJSONObject(i)
+                val movieName = movie.getString("title")
+                val director = movie.getString("director")
+                val actorsArray = movie.getJSONArray("actors")
+                val actorList = mutableListOf<String>()
+                for (j in 0 until actorsArray.length()) {
+                    val actor = actorsArray.getJSONObject(j)
+                    actorList.add(actor.getString("name"))
+                }
+                this.insert(movieName, director, actorList)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -33,7 +43,7 @@ class Database(context: Context) : DatabaseManager(context) {
 
     /** Returns a list of all movie names in the database. */
     val allMovies: ArrayList<String>
-        get() = performQuery(TABLE_MOVIE, arrayOf(MOVIE_NAME))
+        get() = performQuery(TABLE_MOVIE, arrayOf(MOVIE_TITLE))
 
     /** Returns a list of all director names in the database. */
     val allDirectors: ArrayList<String>
@@ -48,7 +58,7 @@ class Database(context: Context) : DatabaseManager(context) {
      */
     val allMoviesAndDirectors: ArrayList<String>
         get() {
-            val select = arrayOf("$TABLE_MOVIE.$MOVIE_NAME", "$TABLE_DIRECTOR.$DIRECTOR_NAME")
+            val select = arrayOf("$TABLE_MOVIE.$MOVIE_TITLE", "$TABLE_DIRECTOR.$DIRECTOR_NAME")
             val from = arrayOf(TABLE_DIRECTOR, TABLE_MOVIE)
             val join = arrayOf("$TABLE_MOVIE.$DIRECTOR_ID=$TABLE_DIRECTOR.$ID")
 
@@ -61,7 +71,7 @@ class Database(context: Context) : DatabaseManager(context) {
      * @param director The name of the director.
      */
     fun getMoviesByDirector(director: String): ArrayList<String> {
-        val select = arrayOf("$TABLE_MOVIE.$MOVIE_NAME")
+        val select = arrayOf("$TABLE_MOVIE.$MOVIE_TITLE")
         val from = arrayOf(TABLE_DIRECTOR, TABLE_MOVIE)
         val join = arrayOf("$TABLE_MOVIE.$DIRECTOR_ID = $TABLE_DIRECTOR.$ID")
         val where = "$TABLE_DIRECTOR.$DIRECTOR_NAME='$director'"
@@ -77,7 +87,7 @@ class Database(context: Context) : DatabaseManager(context) {
         val select = arrayOf("$TABLE_DIRECTOR.$DIRECTOR_NAME")
         val from = arrayOf(TABLE_DIRECTOR, TABLE_MOVIE)
         val join = arrayOf("$TABLE_MOVIE.$DIRECTOR_ID=$TABLE_DIRECTOR.$ID")
-        val where = "$TABLE_MOVIE.$MOVIE_NAME='$movie'"
+        val where = "$TABLE_MOVIE.$MOVIE_TITLE='$movie'"
 
         return performRawQuery(select, from, join, where)
     }
@@ -91,7 +101,7 @@ class Database(context: Context) : DatabaseManager(context) {
         val select = arrayOf("$TABLE_ACTOR.$ACTOR_NAME")
         val from = arrayOf(TABLE_MOVIE, TABLE_ACTOR, TABLE_MOVIE_ACTOR)
         val join = JOIN_MOVIE_ACTOR
-        val where = "$TABLE_MOVIE.$MOVIE_NAME='$movie'"
+        val where = "$TABLE_MOVIE.$MOVIE_TITLE='$movie'"
 
         return performRawQuery(select, from, join, where)
     }
@@ -102,7 +112,7 @@ class Database(context: Context) : DatabaseManager(context) {
      * @param actor The name of the actor.
      */
     fun getMoviesByActor(actor: String): ArrayList<String> {
-        val select = arrayOf("$TABLE_MOVIE.$MOVIE_NAME")
+        val select = arrayOf("$TABLE_MOVIE.$MOVIE_TITLE")
         val from = arrayOf(TABLE_MOVIE, TABLE_ACTOR, TABLE_MOVIE_ACTOR)
         val join = JOIN_MOVIE_ACTOR
         val where = "$TABLE_ACTOR.$ACTOR_NAME='$actor'"

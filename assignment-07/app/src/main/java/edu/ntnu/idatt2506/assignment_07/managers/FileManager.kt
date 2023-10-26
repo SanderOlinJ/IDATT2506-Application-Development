@@ -33,6 +33,10 @@ class FileManager(private val activity: AppCompatActivity) {
         }
     }
 
+    fun read(): String {
+        return file.readText()
+    }
+
     /**
      * Reads the content of a file located in the app's resources folder.
      *
